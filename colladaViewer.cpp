@@ -9,10 +9,12 @@ vec3 eye = vec3(0.0, 0.0, 5.0);
 vec3 up = vec3(0.0, 1.0, 0.0);
 vec3 center = vec3(0.0, 0.0, 0.0);
 
+mat4 mv = mat4(1.0);
+
 bool running = false;
 SDL_Surface *display;
 
-int fovy = 60;
+float fovy = 60.0;
 float zNear = 1.0;
 float zFar = 99.0;
 float aspect = 1.0;
@@ -27,7 +29,6 @@ bool init();
 int main(int argc, char **argv)
 {
     SDL_Event event;
-
     if (!init()) exit(-1);
 
     running = true;
@@ -43,8 +44,25 @@ int main(int argc, char **argv)
 
 void render()
 {
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(&mv[0][0]);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glutSolidTeapot(1);
+    glBegin(GL_POLYGON);
+    
+    glColor3f(0.5, 0.2, 0.1);
+    glVertex3f( 0.5,  0.5, -0.5);
+    glVertex3f( 0.5, -0.5, -0.5);
+    glVertex3f(-0.5, -0.5, -0.5);
+    glVertex3f(-0.5,  0.5, -0.5);
+
+    glVertex3f(-0.5,  0.5, 0.5);
+    glVertex3f(-0.5, -0.5, 0.5);
+    glVertex3f( 0.5, -0.5, 0.5);
+    glColor3f(0.1, 0.5, 0.2);
+    glVertex3f( 0.5,  0.5, 0.5);
+    glEnd();
+
     SDL_GL_SwapBuffers();
 }
 
@@ -55,6 +73,7 @@ void loop()
 
 void quit()
 {
+    SDL_FreeSurface(display);
     SDL_Quit();
 }
 
@@ -80,9 +99,33 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 	running = false;
 	break;
     }
+    case SDLK_LEFT : {
+	mv = glm::rotate(mv, static_cast<float>(10.0), glm::normalize(up));
+	break;
+    }
+    case SDLK_RIGHT : {
+	mv = glm::rotate(mv, static_cast<float>(-10.0), glm::normalize(up));
+	break;
+    }
+    case SDLK_UP : {
+	mv = glm::rotate(mv, static_cast<float>(-10.0), glm::normalize(up));
+	break;
+    }
+    case SDLK_DOWN : {
+	mv = glm::rotate(mv, static_cast<float>(-10.0), glm::normalize(up));
+	break;
+    }
     default: break;
     }
 }
+
+/*
+  Написать класс камеры!
+  С векторами eye, up, и center. И чтобы кнопки влияли на камеру, такие дела.
+
+
+
+ */
 
 bool init()
 {
@@ -96,12 +139,12 @@ bool init()
     glViewport(0, 0, SIZE, SIZE);
 
     glMatrixMode(GL_PROJECTION);
-    glm::mat4 mv = glm::perspective(fovy, aspect, zNear, zFar);
-    glLoadMatrixf(&mv[0]);
+    mat4 persp = glm::perspective(fovy, aspect, zNear, zFar);
+    glLoadMatrixf(&persp[0][0]);
 
     glMatrixMode(GL_MODELVIEW);
     mv = glm::lookAt(eye, center, up);
-    glLoadMatrixf(&mv[0]);
+    glLoadMatrixf(&mv[0][0]);
 
     return true;
 }

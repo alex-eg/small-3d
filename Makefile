@@ -1,5 +1,5 @@
 CC = clang
-LIBS = -lSDL -lGL -lGLUT
+LIBS = -lGL -lglut -lSDL
 CFLAGS = -Weverything
 
 BINDIR=./build/
@@ -7,4 +7,7 @@ BINDIR=./build/
 all: collada-viewer
 
 collada-viewer:
-	$(CC) -o viewer $(LIBS) $(CFLAGS) colladaViewer.cpp
+	$(CC) -o viewer colladaViewer.cpp $(LIBS) $(CFLAGS)
+
+debug: 
+	$(MAKE) CFLAGS += -ggdb all
