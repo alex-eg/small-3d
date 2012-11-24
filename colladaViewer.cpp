@@ -87,11 +87,7 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 	break;
     }
     case SDLK_LEFT : {
-<<<<<<< HEAD
 	mv = glm::rotate(mv, static_cast<float>(-10.0), vec3(0.0, 1.0, 0.0));
-=======
-	mv = glm::rotate(mv, static_cast<float>(-10.0), vec3(0.0, 1.0, 0.0));
->>>>>>> 3e55c0c5cc60db341c16727ea4a9bffabf42c111
 	break;
     }
     case SDLK_RIGHT : {
