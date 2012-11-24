@@ -3,7 +3,7 @@
 #
 CC = clang
 LIBS = -lGL -lglut -lSDL
-CFLAGS = -Weverything
+CFLAGS = -Weverything -g
 
 BINDIR=./build/
 

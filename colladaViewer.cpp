@@ -1,14 +1,13 @@
 #include "colladaViewer.hpp"
 #include "camera.hpp"
+#include "Teapot.h"
 
 #define SIZE 600
 
 using glm::mat4;
 using glm::vec3;
 
-vec3 eye = vec3(0.0, 0.0, 5.0);
-vec3 up = vec3(0.0, 1.0, 0.0);
-vec3 center = vec3(0.0, 0.0, 0.0);
+camera cam;
 
 bool running = false;
 SDL_Surface *display;
@@ -46,9 +45,11 @@ void render()
 {
     glMatrixMode(GL_MODELVIEW);
 
+    glm::mat4 mv = cam.getModelViewMatrix();
+    glLoadMatrixf(&mv[0][0]);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    cube(1);
+    Teapot::TeapotFill(1.0);
 
     SDL_GL_SwapBuffers();
 }
@@ -87,30 +88,22 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 	break;
     }
     case SDLK_LEFT : {
-	mv = glm::rotate(mv, static_cast<float>(-10.0), vec3(0.0, 1.0, 0.0));
 	break;
     }
     case SDLK_RIGHT : {
-	mv = glm::rotate(mv, static_cast<float>(10.0), vec3(0.0, 1.0, 0.0));
 	break;
     }
     case SDLK_UP : {
-	mv = glm::rotate(mv, static_cast<float>(10.0), vec3(0.0, 0.0, 0.0));
+	cam.rotatePitch(5.0);
 	break;
     }
     case SDLK_DOWN : {
-	mv = glm::rotate(mv, static_cast<float>(-10.0), vec3(0.0, 1.0, 0.0));
+	cam.rotatePitch(-5.0);
 	break;
     }
     default: break;
     }
 }
-
-/*
-  Написать класс камеры!
-  С векторами eye, up, и center. И чтобы кнопки влияли на камеру, такие дела.
-
- */
 
 bool init()
 {
@@ -128,7 +121,7 @@ bool init()
     glLoadMatrixf(&persp[0][0]);
 
     glMatrixMode(GL_MODELVIEW);
-    mv = glm::lookAt(eye, center, up);
+    mat4 mv = cam.getModelViewMatrix();
     glLoadMatrixf(&mv[0][0]);
 
     return true;
