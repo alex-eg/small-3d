@@ -25,6 +25,7 @@ void processEvent(SDL_Event &ev);
 void processKey(SDLKey sym, SDLMod mod, Uint16 unicode);
 void quit();
 bool init();
+bool cube(float size);
 
 int main(int argc, char **argv)
 {
@@ -48,20 +49,7 @@ void render()
     glLoadMatrixf(&mv[0][0]);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBegin(GL_POLYGON);
-    
-    glColor3f(0.5, 0.2, 0.1);
-    glVertex3f( 0.5,  0.5, -0.5);
-    glVertex3f( 0.5, -0.5, -0.5);
-    glVertex3f(-0.5, -0.5, -0.5);
-    glVertex3f(-0.5,  0.5, -0.5);
-
-    glVertex3f(-0.5,  0.5, 0.5);
-    glVertex3f(-0.5, -0.5, 0.5);
-    glVertex3f( 0.5, -0.5, 0.5);
-    glColor3f(0.1, 0.5, 0.2);
-    glVertex3f( 0.5,  0.5, 0.5);
-    glEnd();
+    cube(1);
 
     SDL_GL_SwapBuffers();
 }
@@ -100,19 +88,19 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 	break;
     }
     case SDLK_LEFT : {
-	mv = glm::rotate(mv, static_cast<float>(10.0), glm::normalize(up));
+	mv = glm::rotate(mv, static_cast<float>(-10.0), vec3(0.0, 1.0, 0.0));
 	break;
     }
     case SDLK_RIGHT : {
-	mv = glm::rotate(mv, static_cast<float>(-10.0), glm::normalize(up));
+	mv = glm::rotate(mv, static_cast<float>(10.0), vec3(0.0, 1.0, 0.0));
 	break;
     }
     case SDLK_UP : {
-	mv = glm::rotate(mv, static_cast<float>(-10.0), glm::normalize(up));
+	mv = glm::rotate(mv, static_cast<float>(10.0), vec3(0.0, 0.0, 0.0));
 	break;
     }
     case SDLK_DOWN : {
-	mv = glm::rotate(mv, static_cast<float>(-10.0), glm::normalize(up));
+	mv = glm::rotate(mv, static_cast<float>(-10.0), vec3(0.0, 1.0, 0.0));
 	break;
     }
     default: break;
@@ -147,4 +135,24 @@ bool init()
     glLoadMatrixf(&mv[0][0]);
 
     return true;
+}
+
+bool cube(float size)
+{    
+#define V(a,b,c) glVertex3d( a size, b size, c size );
+#define N(a,b,c) glNormal3d( a, b, c );
+	
+  glBegin( GL_QUADS );
+  N( 1.0, 0.0, 0.0); V(+,-,+); V(+,-,-); V(+,+,-); V(+,+,+);
+  N( 0.0, 1.0, 0.0); V(+,+,+); V(+,+,-); V(-,+,-); V(-,+,+);
+  N( 0.0, 0.0, 1.0); V(+,+,+); V(-,+,+); V(-,-,+); V(+,-,+);
+  N(-1.0, 0.0, 0.0); V(-,-,+); V(-,+,+); V(-,+,-); V(-,-,-);
+  N( 0.0,-1.0, 0.0); V(-,-,+); V(-,-,-); V(+,-,-); V(+,-,+);
+  N( 0.0, 0.0,-1.0); V(-,-,-); V(-,+,-); V(+,+,-); V(+,-,-);
+  glEnd();
+  
+#undef V
+#undef N
+  
+  return true;
 }
