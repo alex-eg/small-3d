@@ -1,4 +1,5 @@
 #include "colladaViewer.hpp"
+#include "camera.hpp"
 
 #define SIZE 600
 
@@ -8,8 +9,6 @@ using glm::vec3;
 vec3 eye = vec3(0.0, 0.0, 5.0);
 vec3 up = vec3(0.0, 1.0, 0.0);
 vec3 center = vec3(0.0, 0.0, 0.0);
-
-mat4 mv = mat4(1.0);
 
 bool running = false;
 SDL_Surface *display;
@@ -45,7 +44,7 @@ int main(int argc, char **argv)
 void render()
 {
     glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(&mv[0][0]);
+
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBegin(GL_POLYGON);
@@ -100,7 +99,7 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 	break;
     }
     case SDLK_LEFT : {
-	mv = glm::rotate(mv, static_cast<float>(10.0), glm::normalize(up));
+
 	break;
     }
     case SDLK_RIGHT : {
@@ -122,8 +121,6 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 /*
   Написать класс камеры!
   С векторами eye, up, и center. И чтобы кнопки влияли на камеру, такие дела.
-
-
 
  */
 
