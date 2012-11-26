@@ -16,7 +16,7 @@ collada-viewer:
 	$(CC) -c -o viewer.o colladaViewer.cpp $(LIBS) $(CFLAGS)
 
 main: camera collada-viewer
-	$(CC) -o viewer viewer.o camera.o $(LIBS) $(CFLAGS)
+	$(CC) -o viewer viewer.o camera.o teapot.o $(LIBS) $(CFLAGS)
 
 debug: 
 	$(MAKE) CFLAGS += -ggdb all
