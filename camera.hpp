@@ -41,14 +41,6 @@ public:
     void setPositionVector(glm::vec3 newPos);
     void setTargetVector(glm::vec3 newTarget);
 
-    /*    void rotatePitch(float degrees);
-    void rotateYaw(float degrees)  ;
-    void rotateRoll(float degrees) ;
-    				   
-    void moveForward(float meters) ;
-    void moveSide(float meters)    ;
-    void moveVertical(float meters);*/
-
     glm::mat4 getModelViewMatrix();
 };
 
@@ -66,4 +58,4 @@ public:
     void moveVertical(float meters);
 };
 
-#endif
+#endif // ifndef CAMERA
