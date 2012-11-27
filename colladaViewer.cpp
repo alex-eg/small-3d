@@ -7,7 +7,7 @@
 using glm::mat4;
 using glm::vec3;
 
-camera cam;
+flyingCamera cam;
 
 bool running = false;
 SDL_Surface *display;
@@ -49,7 +49,8 @@ void render()
     glLoadMatrixf(&mv[0][0]);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Teapot::TeapotFill(1.0);
+    Teapot::TeapotWired(.4);
+    cube(.2);
 
     SDL_GL_SwapBuffers();
 }
@@ -88,9 +89,11 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 	break;
     }
     case SDLK_LEFT : {
+	cam.rotateYaw(5.0);
 	break;
     }
     case SDLK_RIGHT : {
+	cam.rotateYaw(-5.0);
 	break;
     }
     case SDLK_UP : {
@@ -99,6 +102,22 @@ void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
     }
     case SDLK_DOWN : {
 	cam.rotatePitch(-5.0);
+	break;
+    }
+    case SDLK_w : {
+	cam.moveForward(1.0);
+	break;
+    }
+    case SDLK_s : {
+	cam.moveForward(-1.0);
+	break;
+    }
+    case SDLK_a : {
+	cam.moveSide(-1.0);
+	break;
+    }
+    case SDLK_d : {
+	cam.moveSide(1.0);
 	break;
     }
     default: break;
@@ -110,7 +129,9 @@ bool init()
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) return false;
     if ((display = SDL_SetVideoMode(SIZE, SIZE, 32, SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) return false;
 
-    return true;
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+    SDL_ShowCursor(SDL_DISABLE);
+    SDL_WarpMouse(SIZE/2, SIZE/2);
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0, 0.0, 0.0, 0.0);

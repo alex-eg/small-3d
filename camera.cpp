@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-camera::camera()
+realCamera::realCamera()
 {
     up = glm::vec3(0.0, -1.0, 0.0);
     position = glm::vec3(0.0, 1.0, 1.0);
@@ -11,60 +11,95 @@ camera::camera()
     mv = glm::lookAt(position, target, up);
 }
 
-camera::~camera()
+realCamera::~realCamera()
 {
 }
 
-void camera::setUpVector(glm::vec3 newup)
+void realCamera::setUpVector(glm::vec3 newUp)
 {
-    up = newup;
+    up = newUp;
     updateModelViewMatrix();
 }
 
-void camera::setPosition(glm::vec3 newpos)
+void realCamera::setPositionVector(glm::vec3 newPosition)
 {
-    position = newpos;
+    position = newPosition;
     updateModelViewMatrix();
 }
 
-void camera::setTarget(glm::vec3 newtarget)
+void realCamera::setTargetVector(glm::vec3 newTarget)
 {
-    target = newtarget;
+    target = newTarget;
     updateModelViewMatrix();
 }
 
-void camera::updateModelViewMatrix()
+void realCamera::updateModelViewMatrix()
 {
     glMatrixMode(GL_MODELVIEW);
     mv = glm::lookAt(position, target, up);
     glLoadMatrixf(&mv[0][0]);
 }
 
-glm::mat4 camera::getModelViewMatrix()
+glm::mat4 realCamera::getModelViewMatrix()
 {
     return mv;
 }
 
-void camera::rotatePitch(float degrees)
+/* Flying camera class */
+
+flyingCamera::flyingCamera() : realCamera() {};
+flyingCamera::~flyingCamera() {};
+
+void flyingCamera::rotatePitch(float degrees)
 {
-    glm::vec3 dir = target - position;
-    dir = glm::normalize(dir);
-    glm::vec3 axis = glm::cross(dir, up);
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    glm::vec3 axis = glm::cross(direction, up);
     glm::mat4 rot = glm::rotate(glm::mat4(1.0), degrees, axis);
     glm::mat3 rot3(rot);
     up = rot3 * up;
-    target = rot3 * target;
-    glm::vec3 newDir = rot3 * dir;
-    center = newDir + position;
+    glm::vec3 newDir = rot3 * direction;
+    target = newDir + position;
     updateModelViewMatrix();
 }
 
-void camera::rotateYaw(float degrees)
+void flyingCamera::rotateYaw(float degrees)
+{
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    glm::vec3 axis = glm::normalize(up);
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0), degrees, axis);
+    glm::mat3 rot3(rot);
+    glm::vec3 newDir = rot3 * direction;
+    target = newDir + position;
+    updateModelViewMatrix();
+}
+
+void flyingCamera::rotateRoll(float degrees)
 {
 
 }
 
-void camera::rotateRoll(float degrees)
+void flyingCamera::moveForward(float meters)
 {
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    position += direction * meters;
+    updateModelViewMatrix();
+}
 
+void flyingCamera::moveSide(float meters)
+{
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    glm::vec3 side = glm::cross(direction, up);
+    position += side * meters;
+    updateModelViewMatrix();
+}
+
+void flyingCamera::moveVertical(float meters)
+{
+    glm::vec3 normUp = glm::normalize(up);
+    position += normUp * meters;
+    updateModelViewMatrix();
 }
