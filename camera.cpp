@@ -54,7 +54,8 @@ void camera::rotatePitch(float degrees)
     glm::mat3 rot3(rot);
     up = rot3 * up;
     target = rot3 * target;
-    position = rot3 * position;
+    glm::vec3 newDir = rot3 * dir;
+    center = newDir + position;
     updateModelViewMatrix();
 }
 

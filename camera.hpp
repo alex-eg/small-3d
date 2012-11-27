@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <GL/gl.h>
 
-#define PI 3.1415926
+#define PI 3.1415927
 
 class camera {
 private:
