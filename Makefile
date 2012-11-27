@@ -10,13 +10,13 @@ BINDIR=./build/
 all: camera collada-viewer main
 
 camera: camera.cpp
-	$(CC) -c -o camera.o camera.cpp $(LIBS) $(CFLAGS)
+	$(CC) -c -o camera.o camera.cpp $(CFLAGS)
 
 collada-viewer:
-	$(CC) -c -o viewer.o colladaViewer.cpp $(LIBS) $(CFLAGS)
+	$(CC) -c -o viewer.o colladaViewer.cpp $(CFLAGS)
 
 main: camera collada-viewer
-	$(CC) -o viewer viewer.o camera.o $(LIBS) $(CFLAGS)
+	$(CC) -o viewer viewer.o camera.o Teapot.o $(LIBS) $(CFLAGS)
 
 debug: 
 	$(MAKE) CFLAGS += -ggdb all
