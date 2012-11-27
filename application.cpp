@@ -1,33 +1,33 @@
 #include "application.hpp"
-#include "camera.hpp"
 #include "Teapot.h"
-#include "event.hpp"
 
 #define SIZE 600
 
 using glm::mat4;
 using glm::vec3;
 
-flyingCamera cam;
-keyboardHandler keyboard;
-
-bool running = false;
-SDL_Surface *display;
-
-float fovy = 60.0;
-float zNear = 1.0;
-float zFar = 99.0;
-float aspect = 1.0;
-
-void render();
-void loop();
-void processEvent(SDL_Event &ev);
-void processKey(SDLKey sym, SDLMod mod, Uint16 unicode);
-void quit();
-bool init();
 bool cube(float size);
 
 int main(int argc, char **argv)
+{
+    application app;
+    return app.start(argc, argv);
+}
+
+application::application()
+{
+    running = false;
+    fovy = 60.0;
+    zNear = 1.0;
+    zFar = 99.0;
+    aspect = 1.0;
+}
+
+application::~application()
+{
+}
+
+int application::start(int argc, char** argv)
 {
     SDL_Event event;
     if (!init()) exit(-1);
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void render()
+void application::render()
 {
     glMatrixMode(GL_MODELVIEW);
 
@@ -57,18 +57,18 @@ void render()
     SDL_GL_SwapBuffers();
 }
 
-void loop()
+void application::loop()
 {
     SDL_Delay(10);
 }
 
-void quit()
+void application::quit()
 {
     SDL_FreeSurface(display);
     SDL_Quit();
 }
 
-void processEvent(SDL_Event &ev)
+void application::processEvent(SDL_Event &ev)
 {
     switch (ev.type){
     case SDL_QUIT : {
@@ -83,12 +83,12 @@ void processEvent(SDL_Event &ev)
     }
 }
 
-void processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
+void application::processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
 {
     keyboard.process(sym);
 }
 
-bool init()
+bool application::init()
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) return false;
     if ((display = SDL_SetVideoMode(SIZE, SIZE, 32, SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) return false;
@@ -110,20 +110,20 @@ bool init()
     glLoadMatrixf(&mv[0][0]);
 
     std::function <void()> f;
-    f = [running](){ running = false; };
+    f = [this](){ this->running = false; };
     keyboard.addAction(SDLK_ESCAPE, f);
 
-    f = [cam](){ cam.rotateYaw(5.0); };
+    f = [this](){ this->cam.rotateYaw(5.0); };
     keyboard.addAction(SDLK_LEFT, f);
 
-    f = [cam](){ cam.rotateYaw(-5.0); };
+    f = [this](){ this->cam.rotateYaw(-5.0); };
     keyboard.addAction(SDLK_RIGHT, f);
 
-    f = [cam](){ cam.rotatePitch(5.0); };
+    f = [this](){ this->cam.rotatePitch(5.0); };
     keyboard.addAction(SDLK_UP, f);
 
-    f = [cam](){ cam.rotatePitch(-5.0); };
-    keyboard.addAction(SDL_DOWN, f);
+    f = [this](){ this->cam.rotatePitch(-5.0); };
+    keyboard.addAction(SDLK_DOWN, f);
 
     //f = [cam](){ cam.rotateYaw(5.0); };
     //keyboard.addAction(SDL_LEFT, f);

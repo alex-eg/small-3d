@@ -8,10 +8,10 @@ CFLAGS = -Weverything -g -std=c++11
 
 BINDIR=./build/
 
-all: camera collada-viewer event-process main
+all: camera application event-process main
 
-event-process: events.cpp
-	$(CC) -c -o events.o events.cpp $(CFLAGS)
+event-process: event.cpp
+	$(CC) -c -o event.o event.cpp $(CFLAGS)
 
 camera: camera.cpp
 	$(CC) -c -o camera.o camera.cpp $(CFLAGS)
@@ -19,8 +19,8 @@ camera: camera.cpp
 application: application.cpp
 	$(CC) -c -o app.o application.cpp $(CFLAGS)
 
-main: camera collada-viewer
-	$(CC) -o app app.o camera.o teapot.o events.o $(LIBS) $(CFLAGS)
+main: camera application event-process
+	$(CC) -o app app.o camera.o teapot.o event.o $(LIBS) $(CFLAGS)
 
 debug: 
 	$(MAKE) CFLAGS += -g all
