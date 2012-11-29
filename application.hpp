@@ -1,12 +1,17 @@
+#ifndef APPLICATION
+#define APPLICATION
+
 #include <SDL/SDL.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GL/gl.h>
 #include <GL/glut.h>
+
 #include <functional>
 
 #include "event.hpp"
 #include "camera.hpp"
+#include "wavefrontLoader.hpp"
 
 class application {
 private:
@@ -15,12 +20,7 @@ private:
 
     bool running = false;
     SDL_Surface *display;
-
-    float fovy = 60.0;
-    float zNear = 1.0;
-    float zFar = 99.0;
-    float aspect = 1.0;
-
+    mesh m;
 public:
     application();
     ~application();
@@ -32,3 +32,5 @@ public:
     void quit();
     bool init();
 };
+
+#endif // ifndef APPLICATION

@@ -17,10 +17,6 @@ int main(int argc, char **argv)
 application::application()
 {
     running = false;
-    fovy = 60.0;
-    zNear = 1.0;
-    zFar = 99.0;
-    aspect = 1.0;
 }
 
 application::~application()
@@ -59,6 +55,7 @@ void application::render()
 
 void application::loop()
 {
+    cam.updatePosition();
     SDL_Delay(10);
 }
 
@@ -93,39 +90,41 @@ bool application::init()
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) return false;
     if ((display = SDL_SetVideoMode(SIZE, SIZE, 32, SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) return false;
 
-    SDL_WM_GrabInput(SDL_GRAB_ON);
-    SDL_ShowCursor(SDL_DISABLE);
-    SDL_WarpMouse(SIZE/2, SIZE/2);
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
+    //SDL_ShowCursor(SDL_DISABLE);
+    //SDL_WarpMouse(SIZE/2, SIZE/2);
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glViewport(0, 0, SIZE, SIZE);
 
-    glMatrixMode(GL_PROJECTION);
-    mat4 persp = glm::perspective(fovy, aspect, zNear, zFar);
-    glLoadMatrixf(&persp[0][0]);
+    loader::load("flatGlider.obj", m);
 
-    glMatrixMode(GL_MODELVIEW);
-    mat4 mv = cam.getModelViewMatrix();
-    glLoadMatrixf(&mv[0][0]);
+    cam.render();
 
     std::function <void()> f;
-    f = [this](){ this->running = false; };
+    f = [this]{ this->running = false; };
     keyboard.addAction(SDLK_ESCAPE, f);
 
-    f = [this](){ this->cam.rotateYaw(5.0); };
+    f = [this]{ this->cam.addYawSpeed(.02); };
     keyboard.addAction(SDLK_LEFT, f);
 
-    f = [this](){ this->cam.rotateYaw(-5.0); };
+    f = [this]{ this->cam.addYawSpeed(-.02); };
     keyboard.addAction(SDLK_RIGHT, f);
 
-    f = [this](){ this->cam.rotatePitch(5.0); };
+    f = [this]{ this->cam.addPitchSpeed(.02); };
     keyboard.addAction(SDLK_UP, f);
 
-    f = [this](){ this->cam.rotatePitch(-5.0); };
+    f = [this]{ this->cam.addPitchSpeed(-.02); };
     keyboard.addAction(SDLK_DOWN, f);
 
-    //f = [cam](){ cam.rotateYaw(5.0); };
+    f = [this]{ this->cam.addForwardSpeed(.02); };
+    keyboard.addAction(SDLK_w, f);
+
+    f = [this]{ this->cam.addForwardSpeed(-.02); };
+    keyboard.addAction(SDLK_s, f);
+
+    //f = [cam]{ cam.rotateYaw(5.0); };
     //keyboard.addAction(SDL_LEFT, f);
     
     return true;
