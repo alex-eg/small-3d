@@ -4,13 +4,16 @@
 #
 
 CC = clang
-LIBS = -lGL -lglut -lSDL -lstdc++
-CFLAGS = -W -std=c++11
+LIBS = -lGL -lglut -lSDL -lstdc++ -lGLEW
+CFLAGS = -W -std=c++11 -g
 
 BINDIR=./build/
-OBJ = event.o app.o camera.o teapot.o loader.o
+OBJ = event.o app.o camera.o teapot.o loader.o shader.o
 
-all: camera application event-process loader main
+all: camera application event-process loader shader main 
+
+shader: shader.cpp
+	$(CC) -c -o shader.o shader.cpp $(CFLAGS)
 
 loader:
 	$(CC) -c -o loader.o wavefrontLoader.cpp $(CFLAGS)

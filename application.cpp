@@ -98,6 +98,17 @@ bool application::init()
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glViewport(0, 0, SIZE, SIZE);
 
+    GLenum err = glewInit();
+    if (GLEW_OK != err) {
+	std::cerr << "GLEW init failed!";
+	exit(0);
+    }
+	
+
+    blinnPhong = shaderProgram("shaders/light.vert.glsl",
+			       "shaders/light.frag.glsl");
+    blinnPhong.init();
+    blinnPhong.use(true);
     loader::load("flatGlider.obj", m);
 
     cam.render();
