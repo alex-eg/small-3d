@@ -11,6 +11,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <stdexcept>
 
 class mesh {
     friend class loader;

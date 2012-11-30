@@ -21,10 +21,10 @@ void mesh::render()
 
 void loader::load(std::string filename, mesh &m)
 {
-    std::fstream file(filename, std::ios::in);
+    std::ifstream file(filename);
     if (!file) {
-	std::cerr << "Cannot open " << filename <<"!\n";
-	return;
+	std::cerr << "Cannot open model file " << filename <<"!\n";
+	throw std::invalid_argument(filename);
     }
     std::string line;
     std::map <std::string, std::function<void(std::string)> > processor;
