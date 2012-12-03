@@ -6,8 +6,6 @@
 using glm::mat4;
 using glm::vec3;
 
-bool cube(float size);
-
 int main(int argc, char **argv)
 {
     application app;
@@ -39,16 +37,122 @@ int application::start(int argc, char** argv)
     return 0;
 }
 
+bool application::init()
+{
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) return false;
+    if ((display = SDL_SetVideoMode(SIZE, SIZE, 32, SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) return false;
+
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
+    //SDL_ShowCursor(SDL_DISABLE);
+    //SDL_WarpMouse(SIZE/2, SIZE/2);
+
+    std::cout << "OpenGL version " << glGetString(GL_VERSION) << "\n";
+    std::cout << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+
+    // glewExperimental = GL_TRUE; 
+    if (glewInit() != GLEW_OK) {
+    	std::cerr << "GLEW init failed!";
+    	exit(0);
+    }
+
+    glGenVertexArrays(1, &vertexArrayID);
+    glBindVertexArray(vertexArrayID);
+
+    simple.init("shaders/vert.glsl", "shaders/frag.glsl");
+
+    loader::load("flatGlider.obj", m);
+
+    glGenBuffers(1, &modelvert);
+    glBindBuffer(GL_ARRAY_BUFFER, modelvert);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * m.vertices.size(), &m.vertices[0], GL_STATIC_DRAW);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
+    glViewport(0, 0, SIZE, SIZE);
+
+    cam.render();
+
+    // Move dynamics in another class!
+    // Key DOWN
+    std::function <void()> f;
+    f = [this]{ this->cam.setYawSpeed(1.0); };
+    keyboardKeyDown.setAction(SDLK_LEFT, f);
+
+    f = [this]{ this->cam.setYawSpeed(-1.0); };
+    keyboardKeyDown.setAction(SDLK_RIGHT, f);
+
+    f = [this]{ this->cam.setPitchSpeed(1.0); };
+    keyboardKeyDown.setAction(SDLK_UP, f);
+
+    f = [this]{ this->cam.setPitchSpeed(-1.0); };
+    keyboardKeyDown.setAction(SDLK_DOWN, f);
+
+    f = [this]{ this->cam.setForwardSpeed(.07); };
+    keyboardKeyDown.setAction(SDLK_w, f);
+
+    f = [this]{ this->cam.setForwardSpeed(-.07); };
+    keyboardKeyDown.setAction(SDLK_s, f);
+
+    f = [this]{ this->cam.setRollSpeed(-1.0); };
+    keyboardKeyDown.setAction(SDLK_q, f);
+
+    f = [this]{ this->cam.setRollSpeed(1.0); };
+    keyboardKeyDown.setAction(SDLK_e, f);
+    // Key UP
+
+    f = [this]{ this->running = false; };
+    keyboardKeyUp.setAction(SDLK_ESCAPE, f);
+
+    f = [this]{ this->cam.setYawSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_LEFT, f);
+
+    f = [this]{ this->cam.setYawSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_RIGHT, f);
+
+    f = [this]{ this->cam.setPitchSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_UP, f);
+
+    f = [this]{ this->cam.setPitchSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_DOWN, f);
+
+    f = [this]{ this->cam.setForwardSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_w, f);
+
+    f = [this]{ this->cam.setForwardSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_s, f);
+
+    f = [this]{ this->cam.setRollSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_q, f);
+
+    f = [this]{ this->cam.setRollSpeed(0.0); };
+    keyboardKeyUp.setAction(SDLK_e, f);
+
+    return true;
+}
+
 void application::render()
 {
-    glMatrixMode(GL_MODELVIEW);
-
-    glm::mat4 mv = cam.getModelViewMatrix();
-    glLoadMatrixf(&mv[0][0]);
-
+    simple.use(true);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Teapot::TeapotWired(.4);
-    cube(.2);
+
+    GLuint matrixID = simple.getUniformLocation("MVP");
+    glm::mat4 MVP = cam.getProjectionMatrix() * cam.getModelViewMatrix();
+    glUniformMatrix4fv(matrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, modelvert);
+    glVertexAttribPointer(0,                  // layout in shader program
+			  4,                  // size
+			  GL_FLOAT,           // type
+			  GL_FALSE,           // normalized?
+			  0,                  // stride
+			  (void*)0            // array buffer offset
+			  );
+    
+    glDrawArrays(GL_TRIANGLES, 0, m.vertices.size()); 
+    
+    glDisableVertexAttribArray(0);
 
     SDL_GL_SwapBuffers();
 }
@@ -73,90 +177,23 @@ void application::processEvent(SDL_Event &ev)
 	break;
     }
     case SDL_KEYUP : {
-	processKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	processKeyUp(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	break;
+    }
+    case SDL_KEYDOWN: {
+	processKeyDown(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);	
 	break;
     }
     default: break;
     }
 }
 
-void application::processKey(SDLKey sym, SDLMod mod, Uint16 unicode)
+void application::processKeyUp(SDLKey sym, SDLMod mod, Uint16 unicode)
 {
-    keyboard.process(sym);
+    keyboardKeyUp.process(sym);
 }
 
-bool application::init()
+void application::processKeyDown(SDLKey sym, SDLMod mod, Uint16 unicode)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) return false;
-    if ((display = SDL_SetVideoMode(SIZE, SIZE, 32, SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) return false;
-
-    //SDL_WM_GrabInput(SDL_GRAB_ON);
-    //SDL_ShowCursor(SDL_DISABLE);
-    //SDL_WarpMouse(SIZE/2, SIZE/2);
-
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glViewport(0, 0, SIZE, SIZE);
-
-    GLenum err = glewInit();
-    if (GLEW_OK != err) {
-	std::cerr << "GLEW init failed!";
-	exit(0);
-    }
-	
-
-    blinnPhong = shaderProgram("shaders/light.vert.glsl",
-			       "shaders/light.frag.glsl");
-    blinnPhong.init();
-    blinnPhong.use(true);
-    loader::load("flatGlider.obj", m);
-
-    cam.render();
-
-    std::function <void()> f;
-    f = [this]{ this->running = false; };
-    keyboard.addAction(SDLK_ESCAPE, f);
-
-    f = [this]{ this->cam.addYawSpeed(.02); };
-    keyboard.addAction(SDLK_LEFT, f);
-
-    f = [this]{ this->cam.addYawSpeed(-.02); };
-    keyboard.addAction(SDLK_RIGHT, f);
-
-    f = [this]{ this->cam.addPitchSpeed(.02); };
-    keyboard.addAction(SDLK_UP, f);
-
-    f = [this]{ this->cam.addPitchSpeed(-.02); };
-    keyboard.addAction(SDLK_DOWN, f);
-
-    f = [this]{ this->cam.addForwardSpeed(.02); };
-    keyboard.addAction(SDLK_w, f);
-
-    f = [this]{ this->cam.addForwardSpeed(-.02); };
-    keyboard.addAction(SDLK_s, f);
-
-    //f = [cam]{ cam.rotateYaw(5.0); };
-    //keyboard.addAction(SDL_LEFT, f);
-    
-    return true;
-}
-
-bool cube(float size)
-{
-#define V(a,b,c) glVertex3d( a size, b size, c size );
-#define N(a,b,c) glNormal3d( a, b, c );
-	
-  glBegin( GL_QUADS );
-  N( 1.0, 0.0, 0.0); V(+,-,+); V(+,-,-); V(+,+,-); V(+,+,+);
-  N( 0.0, 1.0, 0.0); V(+,+,+); V(+,+,-); V(-,+,-); V(-,+,+);
-  N( 0.0, 0.0, 1.0); V(+,+,+); V(-,+,+); V(-,-,+); V(+,-,+);
-  N(-1.0, 0.0, 0.0); V(-,-,+); V(-,+,+); V(-,+,-); V(-,-,-);
-  N( 0.0,-1.0, 0.0); V(-,-,+); V(-,-,-); V(+,-,-); V(+,-,+);
-  N( 0.0, 0.0,-1.0); V(-,-,-); V(-,+,-); V(+,+,-); V(+,-,-);
-  glEnd();
-  
-#undef V
-#undef N
-  
-  return true;
+    keyboardKeyDown.process(sym);
 }

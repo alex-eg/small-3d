@@ -19,13 +19,21 @@
 class application {
 private:
     flyingCamera cam;
-    keyboardHandler keyboard;
+    keyboardHandler keyboardKeyUp;
+    keyboardHandler keyboardKeyDown;
 
     bool running = false;
     SDL_Surface *display;
 
     mesh m;
+
     shaderProgram blinnPhong;
+    shaderProgram simple;
+
+    GLuint vertexArrayID;
+  
+    GLuint modelvert;
+    GLuint vertexbuffer;
 public:
     application();
     ~application();
@@ -33,7 +41,8 @@ public:
     void render();
     void loop();
     void processEvent(SDL_Event &ev);
-    void processKey(SDLKey sym, SDLMod mod, Uint16 unicode);
+    void processKeyUp(SDLKey sym, SDLMod mod, Uint16 unicode);
+    void processKeyDown(SDLKey sym, SDLMod mod, Uint16 unicode);
     void quit();
     bool init();
 };
