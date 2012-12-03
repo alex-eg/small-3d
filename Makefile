@@ -12,19 +12,19 @@ OBJ = event.o app.o camera.o teapot.o loader.o shader.o
 
 all: camera application event-process loader shader main 
 
-shader: shader.cpp
+shader:
 	$(CC) -c -o shader.o shader.cpp $(CFLAGS)
 
 loader:
 	$(CC) -c -o loader.o wavefrontLoader.cpp $(CFLAGS)
 
-event-process: event.cpp
+event-process:
 	$(CC) -c -o event.o event.cpp $(CFLAGS)
 
-camera: camera.cpp
+camera: 
 	$(CC) -c -o camera.o camera.cpp $(CFLAGS)
 
-application: application.cpp
+application: 
 	$(CC) -c -o app.o application.cpp $(CFLAGS)
 
 main: camera application event-process
@@ -32,3 +32,5 @@ main: camera application event-process
 
 debug: 
 	$(MAKE) CFLAGS += -g all
+
+.PHONY: main application camera event-process loader shader

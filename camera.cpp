@@ -83,6 +83,7 @@ void flyingCamera::rotateYaw(float degrees)
 {
     glm::vec3 direction = target - position;
     direction = glm::normalize(direction);
+    
     glm::vec3 axis = glm::normalize(up);
     glm::mat4 rot = glm::rotate(glm::mat4(1.0), degrees, axis);
     glm::mat3 rot3(rot);
@@ -93,7 +94,15 @@ void flyingCamera::rotateYaw(float degrees)
 
 void flyingCamera::rotateRoll(float degrees)
 {
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction); 
 
+    glm::vec3 axis = direction; // Direction is axis
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0), degrees, axis);
+
+    glm::mat3 rot3(rot);
+    up = rot3 * up;
+    updateMatrices();
 }
 
 void flyingCamera::moveForward(float meters)
@@ -130,55 +139,36 @@ void flyingCamera::updatePosition() // Dynamics have to be in another componemt!
     rotatePitch(velocityPitch);
     rotateYaw(velocityYaw);
 
-    //velocityYaw -= .1;
-    //velocityPitch -= .1;
-    //velocityRoll -= .1;
-
-    //velocityForward -= .1;
-    //velocitySide -= .1;
-    //velocityVertical -= .1;
 }
 
 // Todo: move dynamics in another class! Or even PROPERTY
-// everyone likes property-based engines!
-// Keywords: message passing,
+// Everyone like property-based engines!
+// Keyword: message passing
 
-void flyingCamera::addForwardSpeed(float meters_per_second)
+void flyingCamera::setForwardSpeed(float meters_per_second)
 {
-    velocityForward += meters_per_second;
-    if ((velocityForward >  maxMoveSpeed) || 
-	(velocityForward < -maxMoveSpeed)) velocityForward -= meters_per_second;
+    velocityForward = meters_per_second;
 }
-void flyingCamera::addSideSpeed(float meters_per_second)
+void flyingCamera::setSideSpeed(float meters_per_second)
 {
-    velocitySide += meters_per_second;
-    if ((velocitySide >  maxMoveSpeed) || 
-	(velocitySide < -maxMoveSpeed)) velocitySide -= meters_per_second;
+    velocitySide = meters_per_second;
 }
-void flyingCamera::addVerticalSpeed(float meters_per_second)
+void flyingCamera::setVerticalSpeed(float meters_per_second)
 {
-    velocityVertical += meters_per_second;
-    if ((velocityVertical >  maxMoveSpeed) || 
-	(velocityVertical < -maxMoveSpeed)) velocityVertical -= meters_per_second;
+    velocityVertical = meters_per_second;
 }
 
-void flyingCamera::addYawSpeed(float degrees_per_second)
+void flyingCamera::setYawSpeed(float degrees_per_second)
 {
-    velocityYaw += degrees_per_second;
-    if ((velocityYaw >  maxRotateSpeed) ||
-	(velocityYaw < -maxRotateSpeed)) velocityYaw -= degrees_per_second;
+    velocityYaw = degrees_per_second;
 }
 
-void flyingCamera::addPitchSpeed(float degrees_per_second)
+void flyingCamera::setPitchSpeed(float degrees_per_second)
 {
-    velocityPitch += degrees_per_second;
-    if ((velocityPitch >  maxRotateSpeed) ||
-	(velocityPitch < -maxRotateSpeed)) velocityPitch -= degrees_per_second;
+    velocityPitch = degrees_per_second;
 }
 
-void flyingCamera::addRollSpeed(float degrees_per_second)
+void flyingCamera::setRollSpeed(float degrees_per_second)
 {
-    velocityRoll += degrees_per_second;
-    if ((velocityRoll >  maxRotateSpeed) ||
-	(velocityRoll < -maxRotateSpeed)) velocityRoll -= degrees_per_second;
+    velocityRoll = degrees_per_second;
 }

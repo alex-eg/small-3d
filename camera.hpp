@@ -77,13 +77,13 @@ public:
 
     void updatePosition();
 
-    void addForwardSpeed(float meters_per_second);
-    void addSideSpeed(float meters_per_second);
-    void addVerticalSpeed(float meters_per_second);
-
-    void addYawSpeed(float degrees_per_second);
-    void addPitchSpeed(float degrees_per_second);
-    void addRollSpeed(float degrees_per_second);
+    void setForwardSpeed(float meters_per_second);
+    void setSideSpeed(float meters_per_second);
+    void setVerticalSpeed(float meters_per_second);
+	 
+    void setYawSpeed(float degrees_per_second);
+    void setPitchSpeed(float degrees_per_second);
+    void setRollSpeed(float degrees_per_second);
 };
 
 #endif // ifndef CAMERA
