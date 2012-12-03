@@ -10,7 +10,7 @@ keyboardHandler::~keyboardHandler()
 
 }
 
-void keyboardHandler::addAction(SDLKey key, std::function <void()> fun)
+void keyboardHandler::setAction(SDLKey key, std::function <void()> fun)
 {
     functionMap[key] = fun;
 }

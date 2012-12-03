@@ -11,7 +11,7 @@ private:
 public:
     keyboardHandler();
     ~keyboardHandler();
-    void addAction(SDLKey key, std::function <void()> fun);
+    void setAction(SDLKey key, std::function <void()> fun);
     void process(SDLKey key);
 };
 
