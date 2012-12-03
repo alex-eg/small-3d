@@ -15,7 +15,7 @@
 
 class mesh {
     friend class loader;
-private:
+public:
     std::string name;
     std::vector <glm::vec4> vertices;
     std::vector <glm::vec3> normals;
