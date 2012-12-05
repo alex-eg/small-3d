@@ -58,13 +58,12 @@ bool application::init()
     glGenVertexArrays(1, &vertexArrayID);
     glBindVertexArray(vertexArrayID);
 
-    simple.init("shaders/vert.glsl", "shaders/frag.glsl");
+    //simple.init("shaders/vert.glsl", "shaders/frag.glsl");
+    simple.init("shaders/light.vert.glsl", "shaders/light.frag.glsl");
 
-    loader::load("flatGlider.obj", m);
+    loader::load("flatGlider-normals.obj", m);
 
-    glGenBuffers(1, &modelvert);
-    glBindBuffer(GL_ARRAY_BUFFER, modelvert);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * m.vertices.size(), &m.vertices[0], GL_STATIC_DRAW);
+    //loader::load("cube.obj", m);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -136,24 +135,45 @@ void application::render()
     simple.use(true);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GLuint matrixID = simple.getUniformLocation("MVP");
-    glm::mat4 MVP = cam.getProjectionMatrix() * cam.getModelViewMatrix();
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, &MVP[0][0]);
+    GLuint lightPosition = simple.getUniformLocation("lightPosition");
+    GLuint lightColor = simple.getUniformLocation("lightColor");
 
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, modelvert);
-    glVertexAttribPointer(0,                  // layout in shader program
-			  4,                  // size
-			  GL_FLOAT,           // type
-			  GL_FALSE,           // normalized?
-			  0,                  // stride
-			  (void*)0            // array buffer offset
-			  );
-    
-    glDrawArrays(GL_TRIANGLES, 0, m.vertices.size()); 
-    
-    glDisableVertexAttribArray(0);
+    GLuint ambient = simple.getUniformLocation("ambient"); 
+    GLuint diffuse = simple.getUniformLocation("diffuse"); 
+    GLuint specular = simple.getUniformLocation("specular"); 
+    GLuint emission = simple.getUniformLocation("emission"); 
+    GLuint shininess = simple.getUniformLocation("shininess"); 
 
+    GLfloat lp[4] = {15.0, 15.0, 15.0, 1.0};
+    glUniform4fv(lightPosition, 1, lp);
+
+    GLfloat lc[4] = {0.7, 0.7, 0.7, 1.0};
+    glUniform4fv(lightColor, 1, lc);
+
+    GLfloat am[4] = {0.1, 0.1, 0.1, 1.0};
+    glUniform4fv(ambient, 1, am);
+
+    GLfloat df[4] = {0.3, 0.5, 0.8, 1.0};
+    glUniform4fv(diffuse, 1, df);
+
+    GLfloat sp[4] = {1.0, 1.0, 1.0, 1.0};
+    glUniform4fv(specular, 1, sp);
+
+    GLfloat em[4] = {0.0, 0.0, 0.0, 1.0};
+    glUniform4fv(emission, 1, em);
+
+    GLfloat sh = 500;
+    glUniform1f(shininess, sh);
+
+    GLuint MV = simple.getUniformLocation("MV");
+    glm::mat4 MVm = cam.getModelViewMatrix();
+    glUniformMatrix4fv(MV, 1, GL_FALSE, &MVm[0][0]);
+
+    GLuint P = simple.getUniformLocation("P");
+    glm::mat4 Pm = cam.getProjectionMatrix();
+    glUniformMatrix4fv(P, 1, GL_FALSE, &Pm[0][0]);
+
+    m.render();
     SDL_GL_SwapBuffers();
 }
 

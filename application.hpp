@@ -27,13 +27,10 @@ private:
 
     mesh m;
 
-    shaderProgram blinnPhong;
     shaderProgram simple;
 
     GLuint vertexArrayID;
   
-    GLuint modelvert;
-    GLuint vertexbuffer;
 public:
     application();
     ~application();
