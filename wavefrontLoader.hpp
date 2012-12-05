@@ -1,6 +1,8 @@
 #ifndef WAVEFRONT_LOADER
 #define WAVEFRONT_LOADER
 
+#include <GL/glew.h>
+
 #include <glm/glm.hpp>
 #include <GL/gl.h>
 
@@ -15,11 +17,17 @@
 
 class mesh {
     friend class loader;
-public:
-    std::string name;
+private:
+    void initializeModel();
+
     std::vector <glm::vec4> vertices;
     std::vector <glm::vec3> normals;
-    std::vector <GLushort> elements;
+    std::vector <GLushort> indices;
+
+    GLuint normalBuffer;
+    GLuint vertexBuffer;
+    GLuint elementBuffer;
+public:
 public:
     mesh();
     ~mesh();
@@ -30,6 +38,7 @@ class loader {
 private:
 public:
     static void load(std::string filename, mesh &m);
+    static void load2(std::string filename, mesh &m);
 };
 
-#endif
+#endif // #ifndef WAVEFRONT_LOADER
