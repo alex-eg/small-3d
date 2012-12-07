@@ -1,5 +1,4 @@
 #include "application.hpp"
-#include "Teapot.h"
 
 #define SIZE 600
 
@@ -61,9 +60,9 @@ bool application::init()
     //simple.init("shaders/vert.glsl", "shaders/frag.glsl");
     simple.init("shaders/light.vert.glsl", "shaders/light.frag.glsl");
 
-    loader::load("flatGlider-normals.obj", m);
+    //loader::load("flatGlider-normals.obj", m);
 
-    //loader::load("cube.obj", m);
+    loader::load("suzanne.obj", m);
 
     glEnable(GL_DEPTH_TEST);
 
