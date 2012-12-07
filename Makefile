@@ -8,7 +8,7 @@ LIBS = -lGL -lglut -lSDL -lstdc++ -lGLEW
 CFLAGS = -W -std=c++11 -g
 
 BINDIR=./build/
-OBJ = event.o app.o camera.o teapot.o loader.o shader.o
+OBJ = event.o app.o camera.o loader.o shader.o
 
 all: camera application event-process loader shader main 
 
