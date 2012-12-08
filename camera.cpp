@@ -1,70 +1,174 @@
 #include "camera.hpp"
 
-camera::camera()
+realCamera::realCamera()
 {
-    up = glm::vec3(0.0, -1.0, 0.0);
-    position = glm::vec3(0.0, 1.0, 1.0);
+    up = glm::vec3(0.0, 1.0, 0.0);
+    position = glm::vec3(0.0, 0.0, 2.0);
     target = glm::vec3(0.0, 0.0, 0.0);
-    fovy = 50.0;
-    aspect = 1.0;
 
-    mv = glm::lookAt(position, target, up);
+    modelView = glm::lookAt(position, target, up);
+    projection = glm::perspective(fovy, aspect, zNear, zFar);
 }
 
-camera::~camera()
+realCamera::~realCamera()
 {
 }
 
-void camera::setUpVector(glm::vec3 newup)
+void realCamera::setUpVector(glm::vec3 newUp)
 {
-    up = newup;
-    updateModelViewMatrix();
+    up = newUp;
+    updateMatrices();
 }
 
-void camera::setPosition(glm::vec3 newpos)
+void realCamera::setPositionVector(glm::vec3 newPosition)
 {
-    position = newpos;
-    updateModelViewMatrix();
+    position = newPosition;
+    updateMatrices();
 }
 
-void camera::setTarget(glm::vec3 newtarget)
+void realCamera::setTargetVector(glm::vec3 newTarget)
 {
-    target = newtarget;
-    updateModelViewMatrix();
+    target = newTarget;
+    updateMatrices();
 }
 
-void camera::updateModelViewMatrix()
+void realCamera::updateMatrices()
 {
+    glMatrixMode(GL_PROJECTION);
+    projection = glm::perspective(fovy, aspect, zNear, zFar);
+    glLoadMatrixf(&projection[0][0]);
+
     glMatrixMode(GL_MODELVIEW);
-    mv = glm::lookAt(position, target, up);
-    glLoadMatrixf(&mv[0][0]);
+    modelView = glm::lookAt(position, target, up);
+    glLoadMatrixf(&modelView[0][0]);
 }
 
-glm::mat4 camera::getModelViewMatrix()
+glm::mat4 realCamera::getModelViewMatrix() const
 {
-    return mv;
+    return modelView;
 }
 
-void camera::rotatePitch(float degrees)
+glm::mat4 realCamera::getProjectionMatrix() const
 {
-    glm::vec3 dir = target - position;
-    dir = glm::normalize(dir);
-    glm::vec3 axis = glm::cross(dir, up);
+    return projection;
+}
+
+void realCamera::render()
+{
+    updateMatrices();
+}
+
+/* Flying camera class */
+
+float flyingCamera::maxMoveSpeed = 3.0f;
+float flyingCamera::maxRotateSpeed = 10.0f;
+
+flyingCamera::flyingCamera() : realCamera() {};
+flyingCamera::~flyingCamera() {};
+
+void flyingCamera::rotatePitch(float degrees)
+{
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    glm::vec3 axis = glm::cross(direction, up);
     glm::mat4 rot = glm::rotate(glm::mat4(1.0), degrees, axis);
     glm::mat3 rot3(rot);
     up = rot3 * up;
-    target = rot3 * target;
-    glm::vec3 newDir = rot3 * dir;
-    center = newDir + position;
-    updateModelViewMatrix();
+    glm::vec3 newDir = rot3 * direction;
+    target = newDir + position;
+    updateMatrices();
 }
 
-void camera::rotateYaw(float degrees)
+void flyingCamera::rotateYaw(float degrees)
 {
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    
+    glm::vec3 axis = glm::normalize(up);
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0), degrees, axis);
+    glm::mat3 rot3(rot);
+    glm::vec3 newDir = rot3 * direction;
+    target = newDir + position;
+    updateMatrices();
+}
+
+void flyingCamera::rotateRoll(float degrees)
+{
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction); 
+
+    glm::vec3 axis = direction; // Direction is axis
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0), degrees, axis);
+
+    glm::mat3 rot3(rot);
+    up = rot3 * up;
+    updateMatrices();
+}
+
+void flyingCamera::moveForward(float meters)
+{
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    position += direction * meters;
+    updateMatrices();
+}
+
+void flyingCamera::moveSide(float meters)
+{
+    glm::vec3 direction = target - position;
+    direction = glm::normalize(direction);
+    glm::vec3 side = glm::cross(direction, up);
+    position += side * meters;
+    updateMatrices();
+}
+
+void flyingCamera::moveVertical(float meters)
+{
+    glm::vec3 normUp = glm::normalize(up);
+    position += normUp * meters;
+    updateMatrices();
+}
+
+void flyingCamera::updatePosition() // Dynamics have to be in another componemt!
+{
+    moveForward(velocityForward);
+    moveSide(velocitySide);
+    moveVertical(velocityVertical);
+
+    rotateRoll(velocityRoll);
+    rotatePitch(velocityPitch);
+    rotateYaw(velocityYaw);
 
 }
 
-void camera::rotateRoll(float degrees)
-{
+// Todo: move dynamics in another class! Or even PROPERTY
+// Everyone like property-based engines!
+// Keyword: message passing
 
+void flyingCamera::setForwardSpeed(float meters_per_second)
+{
+    velocityForward = meters_per_second;
+}
+void flyingCamera::setSideSpeed(float meters_per_second)
+{
+    velocitySide = meters_per_second;
+}
+void flyingCamera::setVerticalSpeed(float meters_per_second)
+{
+    velocityVertical = meters_per_second;
+}
+
+void flyingCamera::setYawSpeed(float degrees_per_second)
+{
+    velocityYaw = degrees_per_second;
+}
+
+void flyingCamera::setPitchSpeed(float degrees_per_second)
+{
+    velocityPitch = degrees_per_second;
+}
+
+void flyingCamera::setRollSpeed(float degrees_per_second)
+{
+    velocityRoll = degrees_per_second;
 }
