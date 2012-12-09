@@ -1,6 +1,35 @@
-Todo:
-1. Logs
-2. State management
-3. Move camera dynamics in separate place
-4. Switch to CMake
-5. Draw some beautiful graphs
+Object hierarchy.
+I want to have many properties describing objects of surrounding world.
+There are visible, but statical objects.
+There are visible and dynamical objects.
+There are invisible objects, that have an influance on other objects.
+
+One entity - many properties.
+
+So, algorithm:
+    initialize state;
+    forever:
+	poll outer world events;
+	     process each event;
+	for each object in world:
+	     according to events and previous world state
+	     process object's new state:
+	     	     detect collisions;    <--|
+	     	     update postions;	 <----+--- so, properties
+		     update inner states;  <--|
+		     
+	render all scene;
+	
+    cleanup;
+
+    for each property of entity: 
+    	call Update method on Logic
+	call Render method on Renderable
+
+
+properties may be:
+	   --> Renderable
+	   --> Physical
+	   --> Dynamic
+	   --> Collisionable
+	   --> Logics	     
