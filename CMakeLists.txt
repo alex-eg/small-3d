@@ -1,7 +1,10 @@
 project(small-3d)
 cmake_minimum_required(VERSION 2.8.0)
 
-set(SRC_DIR ./)
+set(CMAKE_SOURCE_DIR ./)
+set(INCLUDE_DIR ./include)
+set(SRC_DIR ./src)
+set(EXECUTABLE_OUTPUT_PATH ./bin)
 
 set(SRCS
   ${SRC_DIR}/application.cpp
@@ -9,6 +12,8 @@ set(SRCS
   ${SRC_DIR}/event.cpp
   ${SRC_DIR}/shader.cpp
   ${SRC_DIR}/wavefrontLoader.cpp)
+
+include_directories(${INCLUDE_DIR})
   
 add_executable(app ${SRCS})
 
@@ -16,7 +21,6 @@ set(CMAKE_CXX_COMPILER clang)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ./)
 
 set(CMAKE_CXX_FLAGS -std=c++11)
-
 set(CMAKE_CXX_FLAGS_DEBUG -g)
 set(CMAKE_CXX_FLAGS_RELEASE -O2)
 
