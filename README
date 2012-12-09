@@ -1,0 +1,6 @@
+Todo:
+1. Logs
+2. State management
+3. Move camera dynamics in separate place
+4. Switch to CMake
+5. Draw some beautiful graphs
