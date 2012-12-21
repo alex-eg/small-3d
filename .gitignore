@@ -1,1 +1,8 @@
 *~
+*#
+CMakeCache.txt
+app
+*.o
+*.cmake
+Makefile
+CMakeFiles/
