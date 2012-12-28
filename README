@@ -15,8 +15,12 @@ So, algorithm:
 	     according to events and previous world state
 	     process object's new state:
 	     	     detect collisions;    <--|
-	     	     update postions;	 <----+--- so, properties
-		     update inner states;  <--|
+	     	     update postions;	 <----|
+		     update inner states;  <--+--- so, properties
+		     update logics	 <----|
+		     process animation     <--|
+		     and so forth  	 <----|
+		     
 		     
 	render all scene;
 	
@@ -31,5 +35,5 @@ properties may be:
 	   --> Renderable
 	   --> Physical
 	   --> Dynamic
-	   --> Collisionable
+	   --> Collisionable (Rigid body, I think?)
 	   --> Logics	     
