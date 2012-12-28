@@ -13,7 +13,7 @@
 
 #include "event.hpp"
 #include "camera.hpp"
-#include "wavefrontLoader.hpp"
+#include "mesh.hpp"
 #include "shader.hpp"
 
 class application {

@@ -62,7 +62,7 @@ bool application::init()
 
     //loader::load("flatGlider-normals.obj", m);
 
-    loader::load("suzanne.obj", m);
+    m.loadFromFile("resources/models/suzanne.obj");
 
     glEnable(GL_DEPTH_TEST);
 
