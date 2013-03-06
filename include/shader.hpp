@@ -9,6 +9,11 @@
 #include <iostream>
 #include <stdexcept>
 
+class Shader {
+
+    int very_stub;
+};
+
 class shaderProgram {
 private:
     GLuint programID;

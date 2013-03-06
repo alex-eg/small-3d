@@ -2,17 +2,11 @@
 
 // Mesh class
 
-mesh::mesh()
-{
+Mesh::Mesh() {}
 
-}
+Mesh::~Mesh() {}
 
-mesh::~mesh()
-{
-
-}
-
-void mesh::render()
+void Mesh::render()
 {
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -40,7 +34,7 @@ void mesh::render()
     glDisableVertexAttribArray(1);    
 }
 
-void mesh::initializeModel()
+void Mesh::initializeModel()
 {
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -55,7 +49,7 @@ void mesh::initializeModel()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * indices.size(), &indices[0], GL_STATIC_DRAW);
 }
 
-bool mesh::loadFromFile(std::string filename)
+bool Mesh::loadFromFile(std::string filename)
 {
     std::vector <glm::vec3> rawNormals;
     std::vector <glm::vec4> rawVertices;
@@ -133,7 +127,7 @@ bool mesh::loadFromFile(std::string filename)
 }
 
 /*
-void mesh::load2(std::string filename, mesh &m)
+void Mesh::load2(std::string filename, Mesh &m)
 {
     std::ifstream file(filename);
     if (!file) {

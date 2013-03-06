@@ -1,5 +1,7 @@
-#ifndef APP_MESH
-#define APP_MESH
+#ifndef MESH
+#define MESH
+
+#include "propGraphics.hpp"
 
 #include <GL/glew.h>
 
@@ -16,7 +18,7 @@
 #include <iostream>
 #include <stdexcept>
 
-class mesh {
+class Mesh : public Renderable {
     friend class loader;
 private:
     void initializeModel();
@@ -29,10 +31,10 @@ private:
     GLuint vertexBuffer;
     GLuint elementBuffer;
 public:
-    mesh();
-    ~mesh();
+    Mesh();
+    ~Mesh();
     void render();
     bool loadFromFile(std::string filename);
 };
 
-#endif // APP_MESH
+#endif // MESH

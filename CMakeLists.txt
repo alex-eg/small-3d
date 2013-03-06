@@ -8,11 +8,14 @@ set(EXECUTABLE_OUTPUT_PATH ./bin)
 set(EXECUTABLE_NAME whatever)
 
 set(SRCS
-  ${SRC_DIR}/application.cpp
-  ${SRC_DIR}/camera.cpp
-  ${SRC_DIR}/event.cpp
-  ${SRC_DIR}/shader.cpp
-  ${SRC_DIR}/mesh.cpp)
+#  ${SRC_DIR}/application.cpp
+#  ${SRC_DIR}/camera.cpp
+#  ${SRC_DIR}/event.cpp
+#  ${SRC_DIR}/shader.cpp
+  ${SRC_DIR}/mesh.cpp
+  ${SRC_DIR}/propPosition.cpp
+  ${SRC_DIR}/propGraphics.cpp
+)
 
 include_directories(${INCLUDE_DIR})
   
