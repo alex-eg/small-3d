@@ -54,8 +54,8 @@ void main (void)
 	vec3 position = lightPosition.xyz / lightPosition.w ; 
 	direction = normalize (position - mypos) ; // no attenuation 
     }
-    vec3 half = normalize (direction + eyedirn) ;  
-    vec4 col = ComputeLight(direction, lightColor, normal, half, diffuse, specular, shininess) ;
+    vec3 halfv = normalize(direction + eyedirn);
+    vec4 col = ComputeLight(direction, lightColor, normal, halfv, diffuse, specular, shininess) ;
 
     finalcolor += col;
 
