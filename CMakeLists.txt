@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.0)
 set(CMAKE_SOURCE_DIR ./)
 set(INCLUDE_DIR ./include)
 set(SRC_DIR ./src)
-set(EXECUTABLE_OUTPUT_PATH ./bin)
+set(EXECUTABLE_OUTPUT_PATH ./)
 set(EXECUTABLE_NAME whatever)
 
 set(SRCS

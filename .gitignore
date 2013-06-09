@@ -1,8 +1,4 @@
 *~
 *#
-CMakeCache.txt
-app
-*.o
-Makefile
-CMakeFiles/
-*.cmake
+build
+
