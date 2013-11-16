@@ -8,10 +8,10 @@ set(EXECUTABLE_OUTPUT_PATH ./)
 set(EXECUTABLE_NAME whatever)
 
 set(SRCS
-#  ${SRC_DIR}/application.cpp
-#  ${SRC_DIR}/camera.cpp
-#  ${SRC_DIR}/event.cpp
-#  ${SRC_DIR}/shader.cpp
+  ${SRC_DIR}/application.cpp
+  ${SRC_DIR}/camera.cpp
+  ${SRC_DIR}/event.cpp
+  ${SRC_DIR}/shader.cpp
   ${SRC_DIR}/mesh.cpp
   ${SRC_DIR}/propPosition.cpp
   ${SRC_DIR}/propGraphics.cpp
@@ -39,7 +39,7 @@ find_package(OpenGL)
 if (OPENGL_FOUND)
   message("Found OpenGL...")
   include_directories(${OPENGL_INCLUDE_DIRS})
-  target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_gl_LIBRARIES})
+  target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_gl_LIBRARIES} -lGL)
 endif (OPENGL_FOUND)
 
 find_package(GLEW REQUIRED)
@@ -50,5 +50,5 @@ if (GLEW_FOUND)
 endif (GLEW_FOUND)
 
 if (UNIX) 
-  target_link_libraries(${EXECUTABLE_NAME} -lstdc++)
+  target_link_libraries(${EXECUTABLE_NAME} -lstdc++ -lm)
 endif (UNIX)
