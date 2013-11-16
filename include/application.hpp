@@ -25,7 +25,7 @@ private:
     bool running = false;
     SDL_Surface *display;
 
-    mesh m;
+    Mesh m;
 
     shaderProgram simple;
 
