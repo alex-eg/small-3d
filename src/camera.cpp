@@ -34,13 +34,9 @@ void realCamera::setTargetVector(glm::vec3 newTarget)
 
 void realCamera::updateMatrices()
 {
-    glMatrixMode(GL_PROJECTION);
     projection = glm::perspective(fovy, aspect, zNear, zFar);
-    glLoadMatrixf(&projection[0][0]);
 
-    glMatrixMode(GL_MODELVIEW);
     modelView = glm::lookAt(position, target, up);
-    glLoadMatrixf(&modelView[0][0]);
 }
 
 glm::mat4 realCamera::getModelViewMatrix() const
