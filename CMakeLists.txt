@@ -21,7 +21,7 @@ include_directories(${INCLUDE_DIR})
   
 add_executable(${EXECUTABLE_NAME} ${SRCS})
 
-set(CMAKE_CXX_COMPILER clang)
+set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ./)
 
 set(CMAKE_CXX_FLAGS -std=c++11)
@@ -44,9 +44,9 @@ endif (OPENGL_FOUND)
 
 find_package(GLEW REQUIRED)
 if (GLEW_FOUND)
-  message("Found GLEW...")
+  message("Found GLEW...:" ${GLEW_LIBRARY})
   include_directories(${GLEW_INCLUDE_PATH})
-  target_link_libraries(${EXECUTABLE_NAME} ${GLEW_LIBRARY})
+  target_link_libraries(${EXECUTABLE_NAME} ${GLEW_LIBRARY} -lGLEW)
 endif (GLEW_FOUND)
 
 if (UNIX) 
