@@ -28,6 +28,8 @@ set(CMAKE_CXX_FLAGS -std=c++11)
 set(CMAKE_CXX_FLAGS_DEBUG -g)
 set(CMAKE_CXX_FLAGS_RELEASE -O2)
 
+add_definitions(-DGLM_FORCE_RADIANS)
+
 find_package(SDL)
 if (SDL_FOUND) 
   message("Found SDL...")
