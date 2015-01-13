@@ -27,6 +27,7 @@ public:
     bool init(std::string vertexShaderSourceFilename, std::string fragmentShaderSourceFilename);
     void use(bool use);
     GLuint getUniformLocation(std::string name);
+    void printProgramIntrospection();
 };
 
 #endif // ifndef SHADER

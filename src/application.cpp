@@ -126,6 +126,9 @@ bool application::init()
     f = [this]{ this->cam.setRollSpeed(0.0); };
     keyboardKeyUp.setAction(SDLK_e, f);
 
+    f = [this]{ this->simple.printProgramIntrospection(); };
+    keyboardKeyUp.setAction(SDLK_i, f);
+    
     return true;
 }
 
