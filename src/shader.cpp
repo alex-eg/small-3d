@@ -115,8 +115,10 @@ void shaderProgram::printProgramIntrospection()
         //Get the name. Must use a std::vector rather than a std::string for C++03 standards issues.
         //C++11 would let you use a std::string directly.
         std::string nameData;
+        nameData.resize(values[2]);
         glGetProgramResourceName(programID, GL_UNIFORM, unif, nameData.size(), NULL, &nameData[0]);
         std::string name(nameData.begin(), nameData.end() - 1);
+        std::cout << name << std::endl;
     }
 }
 
