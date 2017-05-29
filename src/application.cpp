@@ -27,10 +27,10 @@ int application::start(int argc, char** argv)
 
     running = true;
     while (running) {
-	while (SDL_PollEvent(&event))
-	    processEvent(event);
-	loop();
-	render();
+        while (SDL_PollEvent(&event))
+            processEvent(event);
+        loop();
+        render();
     }
     quit();
     return 0;
@@ -38,8 +38,14 @@ int application::start(int argc, char** argv)
 
 bool application::init()
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) return false;
-    if ((display = SDL_SetVideoMode(SIZE, SIZE, 32, SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) return false;
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        std::cerr << "SDL init failed\n";
+        return false;
+    }
+    if (nullptr == (display = SDL_SetVideoMode(SIZE, SIZE, 32, SDL_GL_DOUBLEBUFFER | SDL_OPENGL))) {
+        std::cerr << "SDL_SetVideoMode failed: " << SDL_GetError() << "\n";
+        return false;
+    }
 
     //SDL_WM_GrabInput(SDL_GRAB_ON);
     //SDL_ShowCursor(SDL_DISABLE);
@@ -48,7 +54,7 @@ bool application::init()
     std::cout << "OpenGL version " << glGetString(GL_VERSION) << "\n";
     std::cout << "GLSL version " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
 
-    // glewExperimental = GL_TRUE; 
+    // glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
     	std::cerr << "GLEW init failed!";
     	exit(0);
@@ -128,7 +134,7 @@ bool application::init()
 
     f = [this]{ this->simple.printProgramIntrospection(); };
     keyboardKeyUp.setAction(SDLK_i, f);
-    
+
     return true;
 }
 
@@ -140,11 +146,11 @@ void application::render()
     GLuint lightPosition = simple.getUniformLocation("lightPosition");
     GLuint lightColor = simple.getUniformLocation("lightColor");
 
-    GLuint ambient = simple.getUniformLocation("ambient"); 
-    GLuint diffuse = simple.getUniformLocation("diffuse"); 
-    GLuint specular = simple.getUniformLocation("specular"); 
-    GLuint emission = simple.getUniformLocation("emission"); 
-    GLuint shininess = simple.getUniformLocation("shininess"); 
+    GLuint ambient = simple.getUniformLocation("ambient");
+    GLuint diffuse = simple.getUniformLocation("diffuse");
+    GLuint specular = simple.getUniformLocation("specular");
+    GLuint emission = simple.getUniformLocation("emission");
+    GLuint shininess = simple.getUniformLocation("shininess");
 
     GLfloat lp[4] = {15.0, 15.0, 15.0, 1.0};
     glUniform4fv(lightPosition, 1, lp);
@@ -203,7 +209,7 @@ void application::processEvent(SDL_Event &ev)
 	break;
     }
     case SDL_KEYDOWN: {
-	processKeyDown(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);	
+	processKeyDown(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 	break;
     }
     default: break;
@@ -219,5 +225,3 @@ void application::processKeyDown(SDLKey sym, SDLMod mod, Uint16 unicode)
 {
     keyboardKeyDown.process(sym);
 }
-
-
