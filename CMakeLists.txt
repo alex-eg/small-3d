@@ -18,7 +18,7 @@ set(SRCS
 )
 
 include_directories(${INCLUDE_DIR})
-  
+
 add_executable(${EXECUTABLE_NAME} ${SRCS})
 
 set(CMAKE_CXX_COMPILER g++)
@@ -31,7 +31,7 @@ set(CMAKE_CXX_FLAGS_RELEASE -O2)
 add_definitions(-DGLM_FORCE_RADIANS)
 
 find_package(SDL)
-if (SDL_FOUND) 
+if (SDL_FOUND)
   message("Found SDL...")
   include_directories(${SDL_INCLUDE_DIRS})
   target_link_libraries(${EXECUTABLE_NAME} ${SDL_LIBRARY})
@@ -44,13 +44,13 @@ if (OPENGL_FOUND)
   target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_gl_LIBRARIES} -lGL)
 endif (OPENGL_FOUND)
 
-find_package(GLEW REQUIRED)
+find_package(GLEW)
 if (GLEW_FOUND)
   message("Found GLEW...:" ${GLEW_LIBRARY})
   include_directories(${GLEW_INCLUDE_PATH})
   target_link_libraries(${EXECUTABLE_NAME} ${GLEW_LIBRARY} -lGLEW)
 endif (GLEW_FOUND)
 
-if (UNIX) 
+if (UNIX)
   target_link_libraries(${EXECUTABLE_NAME} -lstdc++ -lm)
 endif (UNIX)
